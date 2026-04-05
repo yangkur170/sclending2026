@@ -253,16 +253,13 @@ app.get('/admin', (req, res) => {
 });
 
 // ── Start ────────────────────────────────────────────────────
-initDB()
-  .then(() => {
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log('SC Lending Corp. server started on port ' + PORT);
-      console.log('Mode: ' + (isProd ? 'Production (PostgreSQL)' : 'Local (config.json)'));
-    });
-  })
-  .catch(err => {
-    console.error('DB init error (starting anyway):', err.message);
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log('SC Lending Corp. server started on port ' + PORT + ' (DB error — check DATABASE_URL)');
-    });
-  });
+// Listen immediately so Railway health check passes
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('SC Lending Corp. server started on port ' + PORT);
+  console.log('Mode: ' + (isProd ? 'Production (PostgreSQL)' : 'Local (config.json)'));
+});
+
+// Init DB in background after server is already up
+initDB().catch(err => {
+  console.error('DB init error:', err.message);
+});
