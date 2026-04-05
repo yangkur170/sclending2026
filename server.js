@@ -255,15 +255,14 @@ app.get('/admin', (req, res) => {
 // ── Start ────────────────────────────────────────────────────
 initDB()
   .then(() => {
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log('SC Lending Corp. server started on port ' + PORT);
       console.log('Mode: ' + (isProd ? 'Production (PostgreSQL)' : 'Local (config.json)'));
     });
   })
   .catch(err => {
     console.error('DB init error (starting anyway):', err.message);
-    // Start server even if DB init fails — prevents full crash
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log('SC Lending Corp. server started on port ' + PORT + ' (DB error — check DATABASE_URL)');
     });
   });
