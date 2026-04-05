@@ -8,14 +8,16 @@ const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // ── Detect environment ──────────────────────────────────────
-const isProd = !!process.env.DATABASE_URL;
+// Only use PostgreSQL if DATABASE_URL looks like a real connection string
+const dbUrl = process.env.DATABASE_URL || '';
+const isProd = dbUrl.startsWith('postgres') && !dbUrl.includes('@host:');
 
 // ── PostgreSQL (production) ─────────────────────────────────
 let pool;
 if (isProd) {
   const { Pool } = require('pg');
   pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: dbUrl,
     ssl: { rejectUnauthorized: false }
   });
 }
@@ -254,16 +256,14 @@ app.get('/admin', (req, res) => {
 initDB()
   .then(() => {
     app.listen(PORT, () => {
-      console.log('');
-      console.log('  SC Lending Corp. server started!');
-      console.log('');
-      console.log('  Website  ->  http://localhost:' + PORT);
-      console.log('  Admin    ->  http://localhost:' + PORT + '/admin');
-      if (!isProd) console.log('  Password ->  check config.json');
-      console.log('');
+      console.log('SC Lending Corp. server started on port ' + PORT);
+      console.log('Mode: ' + (isProd ? 'Production (PostgreSQL)' : 'Local (config.json)'));
     });
   })
   .catch(err => {
-    console.error('Startup failed:', err);
-    process.exit(1);
+    console.error('DB init error (starting anyway):', err.message);
+    // Start server even if DB init fails — prevents full crash
+    app.listen(PORT, () => {
+      console.log('SC Lending Corp. server started on port ' + PORT + ' (DB error — check DATABASE_URL)');
+    });
   });
