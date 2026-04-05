@@ -629,7 +629,7 @@
 <!-- ══════════════════ NAVBAR ══════════════════ -->
 <nav class="nav">
   <a href="#" class="nav-logo">
-    <div class="nav-logo-box"><img src="logo.png" alt="SC Lending Corp Logo" /></div>
+    <div class="nav-logo-box"><img src="logo.png" data-img="logo" alt="SC Lending Corp Logo" /></div>
     <div class="nav-logo-text">
       <b>SC Lending Corp.</b>
       <small>Since 1997</small>
@@ -645,13 +645,13 @@
 
 <!-- ══════════════════ HERO ══════════════════ -->
 <section class="hero" id="home">
-  <div class="hero-bg"><img src="building1.jpg" alt="" /></div>
+  <div class="hero-bg"><img src="building1.jpg" data-img="building1" alt="" /></div>
   <div class="hero-gradient"></div>
   <div class="hero-glow"></div>
   <!-- Mobile only top bar -->
   <div class="hero-mobile-top">
     <div class="hero-mobile-logo">
-      <img src="logo.png" alt="SC Lending Corp"
+      <img src="logo.png" data-img="logo" alt="SC Lending Corp"
         onerror="this.style.background='linear-gradient(145deg,#EDD060,#A8860A)';this.style.display='flex';this.style.alignItems='center';this.style.justifyContent='center';this.alt='SC'" />
     </div>
     <div class="hero-mobile-name">
@@ -714,7 +714,7 @@
     <div class="about-grid">
       <div class="img-stack reveal-left">
         <div class="img-main">
-          <img src="building1.jpg" alt="SC Lending Corp - Jollibee Plaza" />
+          <img src="building1.jpg" data-img="building1" alt="SC Lending Corp - Jollibee Plaza" />
         </div>
         <div class="img-badge">
           <div class="img-badge-num">27+</div>
@@ -853,11 +853,11 @@
     <div class="loc-grid">
       <div class="loc-photos">
         <div class="loc-photo-lg">
-          <img src="building1.jpg" alt="SC Lending Corp Building - Jollibee Plaza" />
+          <img src="building1.jpg" data-img="building1" alt="SC Lending Corp Building - Jollibee Plaza" />
         </div>
         <div class="loc-photo-row">
           <div class="loc-photo-sm">
-            <img src="building2.jpg" alt="SC Lending Corp Office Entrance" />
+            <img src="building2.jpg" data-img="building2" alt="SC Lending Corp Office Entrance" />
           </div>
           <div class="loc-photo-sm p3">
             <span>Unit 2308</span>
@@ -1031,10 +1031,11 @@ document.querySelectorAll('.reveal, .reveal-left, .reveal-right')
         else el.textContent = val;
       });
     };
-    const setImg = (sel, src) => {
-      document.querySelectorAll(sel).forEach(el => {
-        el.src = src + '?t=' + Date.now();
-      });
+    const setImg = (key, src) => {
+      if (!src) return;
+      // Cloudinary URLs are full https:// links; local files need cache-buster
+      const url = src.startsWith('http') ? src : src + '?t=' + Date.now();
+      document.querySelectorAll(`[data-img="${key}"]`).forEach(el => el.src = url);
     };
 
     // Company name & tagline
@@ -1111,16 +1112,10 @@ document.querySelectorAll('.reveal, .reveal-left, .reveal-right')
       });
     }
 
-    // Images — add cache-buster so browser reloads after upload
-    if (c.logo)      setImg('img[src^="logo"]', c.logo);
-    if (c.building1) setImg('img[src^="building1"]', c.building1);
-    if (c.building2) setImg('img[src^="building2"]', c.building2);
-
-    // Hero background
-    if (c.building1) {
-      const heroBg = document.querySelector('.hero-bg img');
-      if (heroBg) heroBg.src = c.building1 + '?t=' + Date.now();
-    }
+    // Images — works with both local filenames and Cloudinary URLs
+    if (c.logo)      setImg('logo',      c.logo);
+    if (c.building1) setImg('building1', c.building1);
+    if (c.building2) setImg('building2', c.building2);
 
     // Footer
     if (c.registrationNo) {
