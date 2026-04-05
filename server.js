@@ -8,30 +8,40 @@ const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // ── Detect environment ──────────────────────────────────────
-// Only use PostgreSQL if DATABASE_URL looks like a real connection string
-const dbUrl = process.env.DATABASE_URL || '';
-const isProd = dbUrl.startsWith('postgres') && !dbUrl.includes('@host:');
+const dbUrl  = process.env.DATABASE_URL || '';
+const isProd = dbUrl.length > 10 && dbUrl.startsWith('postgres') && !dbUrl.includes('user:password@host');
 
-// ── PostgreSQL (production) ─────────────────────────────────
-let pool;
+console.log('Starting SC Lending Corp. server...');
+console.log('PORT:', PORT);
+console.log('Mode:', isProd ? 'Production (PostgreSQL)' : 'Local (config.json)');
+
+// ── PostgreSQL setup ────────────────────────────────────────
+let pool = null;
 if (isProd) {
-  const { Pool } = require('pg');
-  pool = new Pool({
-    connectionString: dbUrl,
-    ssl: { rejectUnauthorized: false }
-  });
+  try {
+    const { Pool } = require('pg');
+    pool = new Pool({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } });
+  } catch (e) {
+    console.error('PG setup error:', e.message);
+  }
 }
 
-// ── Cloudinary (production) ─────────────────────────────────
-let cloudinary, CloudinaryStorage;
-if (isProd) {
-  cloudinary = require('cloudinary').v2;
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key:    process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-  });
-  CloudinaryStorage = require('multer-storage-cloudinary').CloudinaryStorage;
+// ── Cloudinary setup ────────────────────────────────────────
+let cloudinary = null;
+let CloudinaryStorage = null;
+if (isProd && process.env.CLOUDINARY_CLOUD_NAME) {
+  try {
+    cloudinary = require('cloudinary').v2;
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key:    process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+    CloudinaryStorage = require('multer-storage-cloudinary').CloudinaryStorage;
+    console.log('Cloudinary ready');
+  } catch (e) {
+    console.error('Cloudinary setup error:', e.message);
+  }
 }
 
 // ── Middleware ──────────────────────────────────────────────
@@ -47,14 +57,14 @@ app.use(session({
 
 // ── Multer storage ──────────────────────────────────────────
 let storage;
-if (isProd) {
+if (isProd && CloudinaryStorage && cloudinary) {
   storage = new CloudinaryStorage({
     cloudinary,
     params: async (req, file) => ({
-      folder:         'sclending',
-      public_id:      req.body.target || 'upload',
-      overwrite:      true,
-      resource_type:  'image',
+      folder:          'sclending',
+      public_id:       req.body.target || 'upload',
+      overwrite:       true,
+      resource_type:   'image',
       allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif']
     })
   });
@@ -62,9 +72,8 @@ if (isProd) {
   storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, __dirname),
     filename:    (req, file, cb) => {
-      const target = req.body.target || 'upload';
-      const ext    = path.extname(file.originalname).toLowerCase();
-      cb(null, target + ext);
+      const ext = path.extname(file.originalname).toLowerCase();
+      cb(null, (req.body.target || 'upload') + ext);
     }
   });
 }
@@ -74,8 +83,7 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (allowed.includes(ext)) cb(null, true);
+    if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
     else cb(new Error('Only image files are allowed'));
   }
 });
@@ -83,54 +91,63 @@ const upload = multer({
 // ── Auth guard ──────────────────────────────────────────────
 const requireAuth = (req, res, next) => {
   if (req.session.authenticated) return next();
-  res.status(401).json({ error: 'Unauthorized — please login' });
+  res.status(401).json({ error: 'Unauthorized' });
 };
 
 // ── Default config ──────────────────────────────────────────
 const defaultConfig = {
-  companyName:    'SC LENDING CORP.',
-  tagline:        'Since 1997',
-  applyLink:      'https://primelendph.finance/choose/',
-  logo:           'logo.png',
-  building1:      'building1.jpg',
-  building2:      'building2.jpg',
-  phone:          '+63 (0) 000 000 0000',
-  email:          'info@sclendingcorp.com',
-  address:        'Unit 2308, Jollibee Plaza, Emerald Avenue, Pasig City, 1605, Philippines',
-  officeHours:    'Monday \u2013 Friday: 8:00 AM \u2013 5:00 PM | Saturday: 8:00 AM \u2013 12:00 PM',
-  heroTitle:      'Your Trusted Financial Partner in the Philippines',
-  heroSubtitle:   'SC Lending Corp. has been empowering Filipinos with accessible, transparent, and reliable loan solutions for over 27 years. Serving individuals and businesses with integrity since 1997.',
-  aboutTitle:     'Building Financial Trust Since 1997',
-  aboutText:      'SC Lending Corp. is a duly registered lending company under the Securities and Exchange Commission of the Philippines. With over two decades of dedicated service, we are committed to providing fair, transparent, and professional financial solutions to Filipinos.',
-  aboutText2:     'Our office is strategically located at Jollibee Plaza, Emerald Avenue, Pasig City \u2014 at the heart of Metro Manila\u2019s premier business district, making us accessible and easy to reach.',
-  registrationNo: 'A199705228',
-  licenseNo:      '437',
-  regDate:        'March 26, 1997',
-  mapsLink:       'https://www.google.com/maps/place/SC+Lending+Corporation/@14.5877605,121.0601131,17.97z/data=!3m1!4b1!4m6!3m5!1s0x3397c817450c6a75:0x1fb0d614a3d3756b!8m2!3d14.587758!4d121.061353!16s%2Fg%2F11bzv_0mkt?entry=ttu',
-  yearsInOperation: '27+',
-  adminPassword:  'sclending2024'
+  companyName:     'SC LENDING CORP.',
+  tagline:         'Since 1997',
+  applyLink:       'https://primelendph.finance/choose/',
+  logo:            'logo.png',
+  building1:       'building1.jpg',
+  building2:       'building2.jpg',
+  phone:           '+63 (0) 000 000 0000',
+  email:           'info@sclendingcorp.com',
+  address:         'Unit 2308, Jollibee Plaza, Emerald Avenue, Pasig City, 1605, Philippines',
+  officeHours:     'Monday \u2013 Friday: 8:00 AM \u2013 5:00 PM | Saturday: 8:00 AM \u2013 12:00 PM',
+  heroTitle:       'Your Trusted Financial Partner in the Philippines',
+  heroSubtitle:    'SC Lending Corp. has been empowering Filipinos with accessible, transparent, and reliable loan solutions for over 27 years. Serving individuals and businesses with integrity since 1997.',
+  aboutTitle:      'Building Financial Trust Since 1997',
+  aboutText:       'SC Lending Corp. is a duly registered lending company under the Securities and Exchange Commission of the Philippines. With over two decades of dedicated service, we are committed to providing fair, transparent, and professional financial solutions to Filipinos.',
+  aboutText2:      'Our office is strategically located at Jollibee Plaza, Emerald Avenue, Pasig City \u2014 at the heart of Metro Manila\u2019s premier business district, making us accessible and easy to reach.',
+  registrationNo:  'A199705228',
+  licenseNo:       '437',
+  regDate:         'March 26, 1997',
+  mapsLink:        'https://www.google.com/maps/place/SC+Lending+Corporation/@14.5877605,121.0601131,17.97z/data=!3m1!4b1!4m6!3m5!1s0x3397c817450c6a75:0x1fb0d614a3d3756b!8m2!3d14.587758!4d121.061353!16s%2Fg%2F11bzv_0mkt?entry=ttu',
+  yearsInOperation:'27+',
+  adminPassword:   'sclending2024'
 };
 
 // ── Config helpers ──────────────────────────────────────────
 const getConfig = async () => {
-  if (isProd) {
-    const result = await pool.query('SELECT data FROM config WHERE id = 1');
-    return result.rows[0]?.data || defaultConfig;
+  if (isProd && pool) {
+    try {
+      const result = await pool.query('SELECT data FROM config WHERE id = 1');
+      if (result.rows.length > 0) return result.rows[0].data;
+    } catch (e) {
+      console.error('getConfig DB error:', e.message);
+    }
   }
-  return JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  // Fallback: read config.json
+  try {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+  } catch (e) {
+    return { ...defaultConfig };
+  }
 };
 
 const saveConfig = async (data) => {
-  if (isProd) {
+  if (isProd && pool) {
     await pool.query('UPDATE config SET data = $1 WHERE id = 1', [JSON.stringify(data)]);
-  } else {
-    fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(data, null, 2));
+    return;
   }
+  fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(data, null, 2));
 };
 
 // ── DB init ─────────────────────────────────────────────────
 const initDB = async () => {
-  if (!isProd) return;
+  if (!isProd || !pool) return;
   await pool.query(`
     CREATE TABLE IF NOT EXISTS config (
       id   INTEGER PRIMARY KEY,
@@ -140,23 +157,27 @@ const initDB = async () => {
   const result = await pool.query('SELECT id FROM config WHERE id = 1');
   if (result.rows.length === 0) {
     await pool.query('INSERT INTO config (id, data) VALUES (1, $1)', [JSON.stringify(defaultConfig)]);
+    console.log('DB: default config inserted');
+  } else {
+    console.log('DB: config table ready');
   }
 };
 
+// ── Health check ────────────────────────────────────────────
+app.get('/health', (req, res) => res.json({ status: 'ok', mode: isProd ? 'production' : 'local' }));
+
 // ── Routes ──────────────────────────────────────────────────
 
-// Public: get config
 app.get('/api/config', async (req, res) => {
   try {
     const config = await getConfig();
     const { adminPassword, ...safe } = config;
     res.json(safe);
   } catch (e) {
-    res.status(500).json({ error: 'Config not found' });
+    res.status(500).json({ error: 'Config error' });
   }
 });
 
-// Login
 app.post('/api/login', async (req, res) => {
   try {
     const config = await getConfig();
@@ -167,34 +188,30 @@ app.post('/api/login', async (req, res) => {
       res.status(401).json({ error: 'Wrong password' });
     }
   } catch (e) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Login error' });
   }
 });
 
-// Logout
 app.post('/api/logout', (req, res) => {
   req.session.destroy();
   res.json({ success: true });
 });
 
-// Session check
 app.get('/api/me', (req, res) => {
   res.json({ authenticated: !!req.session.authenticated });
 });
 
-// Save config
 app.post('/api/config', requireAuth, async (req, res) => {
   try {
     const current = await getConfig();
     const updated = { ...current, ...req.body, adminPassword: current.adminPassword };
     await saveConfig(updated);
-    res.json({ success: true, message: 'Settings saved successfully!' });
+    res.json({ success: true, message: 'Settings saved!' });
   } catch (e) {
-    res.status(500).json({ error: 'Failed to save config' });
+    res.status(500).json({ error: 'Save failed: ' + e.message });
   }
 });
 
-// Change password
 app.post('/api/change-password', requireAuth, async (req, res) => {
   const { newPassword } = req.body;
   if (!newPassword || newPassword.length < 6)
@@ -205,25 +222,20 @@ app.post('/api/change-password', requireAuth, async (req, res) => {
     await saveConfig(config);
     res.json({ success: true, message: 'Password changed!' });
   } catch (e) {
-    res.status(500).json({ error: 'Failed to change password' });
+    res.status(500).json({ error: 'Failed: ' + e.message });
   }
 });
 
-// Upload image
 app.post('/api/upload', requireAuth, (req, res) => {
   upload.single('image')(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message });
     if (!req.file) return res.status(400).json({ error: 'No image received' });
-
     try {
       const target = req.body.target;
       let url;
-
-      if (isProd) {
-        // Cloudinary — req.file.path is the full secure URL
-        url = req.file.path;
+      if (isProd && cloudinary) {
+        url = req.file.path; // Cloudinary secure URL
       } else {
-        // Local — rename to correct target name
         const ext     = path.extname(req.file.originalname).toLowerCase();
         const newName = target + ext;
         const oldPath = req.file.path;
@@ -234,12 +246,9 @@ app.post('/api/upload', requireAuth, (req, res) => {
         }
         url = '/' + newName;
       }
-
-      // Save URL to config
       const config   = await getConfig();
       config[target] = url;
       await saveConfig(config);
-
       res.json({ success: true, url });
     } catch (e) {
       res.status(500).json({ error: 'Upload failed: ' + e.message });
@@ -247,19 +256,15 @@ app.post('/api/upload', requireAuth, (req, res) => {
   });
 });
 
-// Admin panel
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-// ── Start ────────────────────────────────────────────────────
-// Listen immediately so Railway health check passes
+// ── Start server FIRST, then init DB ────────────────────────
 app.listen(PORT, '0.0.0.0', () => {
-  console.log('SC Lending Corp. server started on port ' + PORT);
-  console.log('Mode: ' + (isProd ? 'Production (PostgreSQL)' : 'Local (config.json)'));
+  console.log('Server ready on port ' + PORT);
 });
 
-// Init DB in background after server is already up
-initDB().catch(err => {
-  console.error('DB init error:', err.message);
-});
+initDB()
+  .then(() => console.log('DB init complete'))
+  .catch(err  => console.error('DB init failed (non-fatal):', err.message));
