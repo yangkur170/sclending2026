@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SC Lending Corp. – Trusted Financial Solutions Since 1997</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      /* ── Gold (accent: buttons, badges, numbers, highlights) ── */
+      --gold:        #D4AF37;
+      --gold-light:  #EDD060;
+      --gold-dark:   #A8860A;
+      --gold-muted:  rgba(212,175,55,0.12);
+
+      /* ── Green (primary: nav, dark sections, icons, structure) ── */
+      --green:       #27A31A;
+      --green-light: #48C93A;
+      --green-dark:  #177510;
+      --green-muted: rgba(39,163,26,0.14);
+
+      /* ── Backgrounds ── */
+      --cream:       #EFF8ED;
+      --cream-mid:   #DDF0D8;
+      --cream-dark:  #BFE0B7;
+
+      /* ── Dark (navbar, footer, trust bar) ── */
+      --dark:        #142210;
+      --dark-2:      #1A2E14;
+      --dark-3:      #213A1A;
+
+      /* ── Text ── */
+      --text:        #1E3D18;
+      --text-light:  #4A7040;
+      --white:       #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif; background: var(--cream);
+      color: var(--dark); overflow-x: hidden;
+      opacity: 0; transition: opacity 0.18s ease;
+    }
+    body.ready { opacity: 1; }
+
+    /* ─── NAVBAR ──────────────────────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      height: 70px;
+      background: rgba(14, 52, 9, 0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(212,175,55,0.45);
+      box-shadow: 0 2px 18px rgba(0,0,0,0.25), 0 1px 0 rgba(212,175,55,0.10);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 13px; text-decoration: none; }
+    .nav-logo-box {
+      width: 42px; height: 42px;
+      border-radius: 9px; overflow: hidden;
+      box-shadow: 0 4px 14px rgba(39,163,26,0.4);
+      flex-shrink: 0;
+    }
+    .nav-logo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .nav-logo-text { display: flex; flex-direction: column; line-height: 1.2; }
+    .nav-logo-text b { font-size: 14px; font-weight: 700; color: var(--white); letter-spacing: 0.3px; }
+    .nav-logo-text small { font-size: 10px; font-weight: 500; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+
+    /* Desktop nav — all links right side in order */
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; margin-left: auto; }
+    .nav-links a { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.65); text-decoration: none; letter-spacing: 0.3px; transition: color .2s; white-space: nowrap; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold) !important; color: var(--dark) !important;
+      padding: 10px 22px !important; border-radius: 7px !important;
+      font-weight: 700 !important; letter-spacing: 0.3px !important;
+      transition: background .2s !important; white-space: nowrap;
+    }
+    .nav-cta:hover { background: var(--gold-light) !important; }
+
+    /* Desktop: show top badge only */
+    .badge-mobile { display: none !important; }
+    /* Mobile: hide top badge, show bottom badge */
+    @media (max-width: 768px) {
+      .badge-hero   { display: none !important; }
+      .badge-mobile { display: inline-flex !important; margin-top: 20px; }
+    }
+
+    /* ─── HERO ────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      background: var(--dark);
+      position: relative;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      overflow: hidden;
+    }
+    .hero-bg img {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0.55; filter: grayscale(10%);
+    }
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to right,
+          rgba(15,74,9,0.96) 0%,
+          rgba(18,82,12,0.88) 38%,
+          rgba(18,82,12,0.60) 62%,
+          rgba(15,74,9,0.30) 100%),
+        linear-gradient(to bottom,
+          rgba(10,10,8,0.20) 0%,
+          transparent 22%,
+          transparent 75%,
+          rgba(10,10,8,0.35) 100%);
+    }
+    /* remove harsh glow — replaced by floating orbs below */
+    .hero-glow { display: none; }
+
+    /* ── Floating ambient orbs (subtle, professional) ── */
+    .hero-orbs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .orb {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,175,55,0.22) 0%, transparent 70%);
+      animation: orbFloat linear infinite;
+      filter: blur(2px);
+    }
+    .orb-1 { width: 320px; height: 320px; top: -80px; right: 8%;  animation-duration: 14s; animation-delay: 0s; }
+    .orb-2 { width: 200px; height: 200px; bottom: 10%; left: 5%;  animation-duration: 18s; animation-delay: -6s; }
+    .orb-3 { width: 140px; height: 140px; top: 40%; right: 22%;   animation-duration: 11s; animation-delay: -3s; }
+    @keyframes orbFloat {
+      0%   { transform: translateY(0px)   scale(1);   opacity: 0.6; }
+      33%  { transform: translateY(-22px) scale(1.04);opacity: 1;   }
+      66%  { transform: translateY(10px)  scale(0.97);opacity: 0.7; }
+      100% { transform: translateY(0px)   scale(1);   opacity: 0.6; }
+    }
+
+    /* ── Gold shimmer sweep on h1 em ── */
+    .hero h1 em {
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 40%, #fff8d6 55%, var(--gold-light) 70%, var(--gold) 100%);
+      background-size: 220% auto;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: goldSweep 3.5s linear infinite;
+    }
+    @keyframes goldSweep {
+      0%   { background-position: 200% center; }
+      100% { background-position: -50% center; }
+    }
+
+    /* ── Hero entrance animations ── */
+    .anim-fade-up {
+      opacity: 0; transform: translateY(32px);
+      animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .anim-fade-left {
+      opacity: 0; transform: translateX(-28px);
+      animation: fadeLeft 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes fadeLeft {
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .delay-1 { animation-delay: 0.15s; }
+    .delay-2 { animation-delay: 0.35s; }
+    .delay-3 { animation-delay: 0.55s; }
+    .delay-4 { animation-delay: 0.75s; }
+    .delay-5 { animation-delay: 0.95s; }
+
+    /* ── Stat number count-up glow ── */
+    .stat-num { transition: color .3s; }
+    .stat:hover .stat-num { color: var(--gold-light); text-shadow: 0 0 20px rgba(212,175,55,0.5); }
+
+    /* ── Scroll-reveal for sections ── */
+    .reveal {
+      opacity: 0; transform: translateY(36px);
+      transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left {
+      opacity: 0; transform: translateX(-40px);
+      transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0; transform: translateX(40px);
+      transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+
+    /* ── Gold animated underline on section h2 em ── */
+    .h2 em {
+      position: relative; display: inline-block;
+    }
+    .h2 em::after {
+      content: '';
+      position: absolute; left: 0; bottom: -3px;
+      height: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+      border-radius: 2px;
+      transition: width 0.6s cubic-bezier(0.22,1,0.36,1) 0.4s;
+    }
+    .reveal.visible .h2 em::after,
+    .reveal-left.visible .h2 em::after,
+    .reveal-right.visible .h2 em::after { width: 100%; }
+
+    /* ── Badge pulse ring ── */
+    .badge { position: relative; }
+    .badge::before {
+      content: ''; position: absolute; inset: -3px; border-radius: 100px;
+      border: 1px solid rgba(212,175,55,0.35);
+      animation: ringPulse 2.5s ease-out infinite;
+    }
+    @keyframes ringPulse {
+      0%   { opacity: 0.8; transform: scale(1); }
+      60%  { opacity: 0;   transform: scale(1.06); }
+      100% { opacity: 0;   transform: scale(1.06); }
+    }
+
+    /* ── Nav links animated underline ── */
+    .nav-links a { position: relative; }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0%; height: 1.5px;
+      background: var(--gold);
+      transition: width .25s ease;
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ── Service card icon bounce on hover ── */
+    .svc-card:hover .svc-icon { animation: iconBounce 0.4s cubic-bezier(0.36,0.07,0.19,0.97); }
+    @keyframes iconBounce {
+      0%,100% { transform: scale(1); }
+      30%      { transform: scale(1.18); }
+      60%      { transform: scale(0.94); }
+    }
+    .hero-body {
+      position: relative; z-index: 2;
+      padding: 130px 6% 0;
+      max-width: 640px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 9px;
+      border: 1px solid rgba(58,140,47,0.35);
+      background: rgba(58,140,47,0.08);
+      padding: 7px 18px; border-radius: 100px;
+      margin-bottom: 30px;
+    }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .badge span { font-size: 11.5px; font-weight: 600; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(40px, 5.2vw, 70px);
+      font-weight: 900; color: var(--white);
+      line-height: 1.08; margin-bottom: 24px;
+      letter-spacing: -0.5px;
+    }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+
+    .hero-sub {
+      font-size: 16.5px; color: rgba(255,255,255,0.55);
+      line-height: 1.75; max-width: 510px; margin-bottom: 44px;
+    }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-size: 14.5px; font-weight: 700; text-decoration: none;
+      padding: 15px 30px; border-radius: 8px;
+      letter-spacing: 0.2px; transition: all .2s;
+    }
+    .btn-gold { background: var(--gold); color: var(--dark); }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(212,175,55,0.35); }
+    .btn-ghost { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,0.2); }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    .hero-stats {
+      position: relative; z-index: 2;
+      display: flex; gap: 0;
+      margin-top: 70px;
+      border-top: 1px solid rgba(212,175,55,0.40);
+      box-shadow: 0 -1px 0 rgba(237,208,96,0.15);
+    }
+    .stat {
+      padding: 36px 48px 40px;
+      border-right: 1px solid rgba(212,175,55,0.20);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px; font-weight: 900; color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label { font-size: 12.5px; color: rgba(255,255,255,0.42); margin-top: 6px; letter-spacing: 0.3px; }
+
+    /* ─── SECTION COMMONS ─────────────────────────────────────── */
+    section { padding: 100px 6%; }
+    .container { max-width: 1180px; margin: 0 auto; }
+    .tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--green-dark); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; }
+    .h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(30px, 3.8vw, 46px);
+      font-weight: 800; color: var(--dark); line-height: 1.12; margin-bottom: 18px;
+    }
+    .h2 em { color: var(--gold-dark); font-style: normal; }
+    .lead { font-size: 15.5px; color: var(--text-light); line-height: 1.75; max-width: 540px; }
+
+    /* ─── ABOUT ───────────────────────────────────────────────── */
+    .about { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+
+    .img-stack { position: relative; }
+    .img-main {
+      width: 100%; aspect-ratio: 4/3; border-radius: 18px; overflow: hidden;
+      box-shadow: 0 28px 60px rgba(0,0,0,0.13);
+    }
+    .img-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .img-badge {
+      position: absolute; bottom: -28px; right: -28px;
+      background: var(--gold);
+      padding: 22px 28px; border-radius: 14px;
+      box-shadow: 0 16px 44px rgba(39,163,26,0.4);
+    }
+    .img-badge-num { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 900; color: var(--dark); line-height: 1; }
+    .img-badge-lbl { font-size: 12px; font-weight: 700; color: rgba(23,20,15,0.65); margin-top: 5px; white-space: nowrap; }
+
+    .about-text { padding-bottom: 28px; }
+    .reg-list { margin-top: 36px; padding-top: 36px; border-top: 1px solid var(--cream-dark); display: flex; flex-direction: column; gap: 10px; }
+    .reg-row { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text); }
+    .reg-row strong { color: var(--dark); font-weight: 600; }
+    .reg-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+    /* ─── SERVICES ────────────────────────────────────────────── */
+    .services { background: var(--cream); }
+    .services-hd { margin-bottom: 52px; }
+    .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+
+    .svc-card {
+      background: var(--white); border-radius: 16px; padding: 34px 30px;
+      border: 1px solid rgba(0,0,0,0.055);
+      position: relative; overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .svc-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      opacity: 0; transition: opacity .25s;
+    }
+    .svc-card:hover { transform: translateY(-5px); box-shadow: 0 20px 48px rgba(0,0,0,0.09); }
+    .svc-card:hover::after { opacity: 1; }
+
+    .svc-icon {
+      width: 50px; height: 50px; background: var(--green-muted); border-radius: 11px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 22px;
+    }
+    .svc-icon svg { width: 23px; height: 23px; stroke: var(--green-dark); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    .svc-card h3 { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 10px; }
+    .svc-card p { font-size: 13.5px; color: var(--text-light); line-height: 1.72; }
+
+    /* ─── TRUST BAR ───────────────────────────────────────────── */
+    .trust { background: linear-gradient(135deg, #1A7512 0%, #145C0E 50%, #1A7512 100%); padding: 80px 6%; position: relative; overflow: hidden; }
+    .trust::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 85% 20%, rgba(212,175,55,0.28) 0%, transparent 45%),
+        radial-gradient(ellipse at 15% 80%, rgba(212,175,55,0.18) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
+    .trust-hd { max-width: 1180px; margin: 0 auto 48px; display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 1; }
+    .trust-hd h2 { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 800; color: var(--white); text-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .trust-hd h2 em { color: var(--gold); font-style: normal; }
+    .trust-hd p { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 300px; text-align: right; line-height: 1.6; }
+
+    .trust-item {
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(212,175,55,0.35);
+      border-radius: 14px; padding: 26px 22px;
+      transition: all .25s;
+      box-shadow: inset 0 1px 0 rgba(212,175,55,0.15);
+    }
+    .trust-item:hover {
+      background: rgba(212,175,55,0.12);
+      border-color: rgba(212,175,55,0.6);
+      transform: translateY(-3px);
+    }
+    .trust-item-icon {
+      width: 42px; height: 42px; background: rgba(255,255,255,0.25); border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+    }
+    .trust-item-icon svg { width: 20px; height: 20px; stroke: var(--gold); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    .trust-item h4 { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 7px; text-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .trust-item p { font-size: 13px; color: rgba(255,255,255,0.82); line-height: 1.65; }
+
+    /* ─── LOCATION ────────────────────────────────────────────── */
+    .location { background: var(--white); }
+    .loc-hd { margin-bottom: 48px; }
+    .loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+
+    .loc-photos { display: flex; flex-direction: column; gap: 16px; }
+    .loc-photo-lg {
+      border-radius: 16px; overflow: hidden; aspect-ratio: 16/9;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.1);
+    }
+    .loc-photo-lg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .loc-photo-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .loc-photo-sm {
+      border-radius: 12px; overflow: hidden; aspect-ratio: 4/3;
+    }
+    .loc-photo-sm img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .loc-photo-sm.p3 {
+      background: linear-gradient(145deg, var(--gold) 0%, var(--gold-dark) 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px;
+      text-align: center;
+    }
+    .loc-photo-sm.p3 span { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 900; color: var(--dark); line-height: 1; }
+    .loc-photo-sm.p3 small { font-size: 12px; font-weight: 600; color: rgba(23,20,15,0.65); margin-top: 6px; }
+
+    .loc-info { display: flex; flex-direction: column; gap: 20px; }
+    .loc-map {
+      border-radius: 16px; overflow: hidden; height: 300px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    }
+    .loc-map iframe { width: 100%; height: 100%; border: none; }
+
+    .loc-details { display: flex; flex-direction: column; gap: 14px; }
+    .loc-row { display: flex; gap: 15px; align-items: flex-start; }
+    .loc-icon {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: var(--green-muted); border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .loc-icon svg { width: 18px; height: 18px; stroke: var(--green-dark); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    .loc-txt h4 { font-size: 12.5px; font-weight: 700; color: var(--dark); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .loc-txt p, .loc-txt a { font-size: 14px; color: var(--text-light); line-height: 1.6; text-decoration: none; }
+    .loc-txt a:hover { color: var(--green-dark); }
+
+    .gmaps-link {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--gold); color: var(--dark);
+      font-size: 14px; font-weight: 700; padding: 14px 24px; border-radius: 8px;
+      text-decoration: none; margin-top: 4px; width: fit-content;
+      transition: all .2s;
+    }
+    .gmaps-link:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .gmaps-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ─── CONTACT ─────────────────────────────────────────────── */
+    .contact { background: var(--cream); }
+    .contact-grid { display: grid; grid-template-columns: 1fr; max-width: 700px; }
+
+    .contact-info { padding-top: 8px; }
+    .info-cards { margin-top: 40px; display: flex; flex-direction: column; gap: 16px; }
+    .info-card {
+      display: flex; gap: 16px; align-items: flex-start;
+      background: var(--white); border-radius: 13px; padding: 20px 22px;
+      border: 1px solid var(--cream-dark);
+    }
+    .info-card-icon {
+      width: 46px; height: 46px; flex-shrink: 0;
+      background: var(--green-muted); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .info-card-icon svg { width: 21px; height: 21px; stroke: var(--green-dark); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    .info-card-body h4 { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .info-card-body p { font-size: 13.5px; color: var(--text-light); line-height: 1.6; }
+
+    .form-box {
+      background: var(--white); border-radius: 20px; padding: 48px 44px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.07);
+    }
+    .form-box h3 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; color: var(--dark); margin-bottom: 30px; }
+
+    .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .f-group { margin-bottom: 18px; }
+    .f-group label { display: block; font-size: 12.5px; font-weight: 700; color: var(--dark); margin-bottom: 7px; letter-spacing: 0.3px; text-transform: uppercase; }
+    .f-group input,
+    .f-group select,
+    .f-group textarea {
+      width: 100%; padding: 13px 15px;
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif;
+      color: var(--dark); background: var(--cream);
+      outline: none; transition: border-color .2s;
+      appearance: none; -webkit-appearance: none;
+    }
+    .f-group input:focus, .f-group select:focus, .f-group textarea:focus { border-color: var(--gold); }
+    .f-group textarea { height: 110px; resize: none; }
+    .f-submit {
+      width: 100%; padding: 16px; border: none; border-radius: 9px;
+      background: var(--gold); color: var(--dark);
+      font-size: 15px; font-weight: 800; font-family: 'Inter', sans-serif;
+      cursor: pointer; letter-spacing: 0.3px; margin-top: 6px;
+      transition: all .2s;
+    }
+    .f-submit:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+    /* ─── FOOTER ──────────────────────────────────────────────── */
+    .footer {
+      background: rgba(15, 20, 12, 0.98);
+      padding: 0 0 32px;
+      border-top: 2px solid transparent;
+      border-image: linear-gradient(90deg, var(--green-dark), var(--gold), var(--green-dark)) 1;
+      box-shadow: 0 -1px 0 rgba(212,175,55,0.15), 0 -4px 24px rgba(39,163,26,0.10);
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 64px; padding: 52px 6% 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      max-width: 100%; margin: 0 auto;
+    }
+    .f-brand { }
+    .f-brand p { font-size: 13.5px; color: rgba(255,255,255,0.38); line-height: 1.75; max-width: 300px; }
+    .f-reg { margin-top: 22px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .f-reg span { display: block; font-size: 12px; color: rgba(255,255,255,0.28); line-height: 2; }
+
+    .f-col h4 { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.55); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px; }
+    .f-col ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .f-col ul a { font-size: 13.5px; color: rgba(255,255,255,0.38); text-decoration: none; transition: color .2s; }
+    .f-col ul a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      max-width: 100%; margin: 0; padding: 20px 6% 0;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-size: 12.5px; color: rgba(255,255,255,0.25); }
+    .footer-bottom p em { color: var(--gold); font-style: normal; }
+
+    /* ─── DIVIDER ──────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--cream-dark); }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────── */
+    /* ── Tablet ── */
+    @media (max-width: 1024px) {
+      .nav-links { gap: 18px; }
+      .nav-links a { font-size: 12.5px; }
+    }
+    /* Mobile top bar inside hero */
+    .hero-mobile-top {
+      display: none;
+      position: relative; z-index: 10;
+      padding: 22px 5% 0;
+      align-items: center; gap: 16px;
+    }
+    .hero-mobile-logo {
+      width: 64px; height: 64px; border-radius: 14px;
+      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      border: 2px solid rgba(212,175,55,0.4);
+    }
+    .hero-mobile-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-mobile-name { display: flex; flex-direction: column; line-height: 1.3; }
+    .hero-mobile-name b { font-size: 17px; font-weight: 800; color: var(--white); letter-spacing: 0.5px; }
+    .hero-mobile-name small { font-size: 10px; font-weight: 600; color: var(--gold); letter-spacing: 2.5px; text-transform: uppercase; margin-top: 2px; }
+
+    /* Mobile top bar animations */
+    .hero-mobile-logo {
+      animation: logoPopIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+      animation-delay: 0.1s;
+    }
+    @keyframes logoPopIn {
+      0%   { opacity: 0; transform: scale(0.6) rotate(-8deg); }
+      100% { opacity: 1; transform: scale(1)   rotate(0deg); }
+    }
+    /* Gold border pulse on logo */
+    .hero-mobile-logo {
+      animation: logoPopIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.1s both,
+                 logoBorderGlow 3s ease-in-out 0.8s infinite;
+    }
+    @keyframes logoBorderGlow {
+      0%,100% { border-color: rgba(212,175,55,0.4); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+      50%      { border-color: rgba(212,175,55,0.85); box-shadow: 0 6px 28px rgba(212,175,55,0.35); }
+    }
+    .hero-mobile-name b {
+      animation: slideInRight 0.55s cubic-bezier(0.22,1,0.36,1) 0.25s both;
+    }
+    .hero-mobile-name small {
+      animation: slideInRight 0.55s cubic-bezier(0.22,1,0.36,1) 0.38s both;
+    }
+    @keyframes slideInRight {
+      0%   { opacity: 0; transform: translateX(-18px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      /* Hide entire navbar on mobile */
+      .nav { display: none; }
+      /* Show mini header inside hero */
+      .hero-mobile-top { display: flex; }
+      /* Hero body padding adjusted */
+      .hero-body { max-width: 100%; padding: 24px 5% 0; }
+      .hero-stats { flex-wrap: wrap; }
+      .stat { padding: 22px 24px; flex: 1 1 45%; }
+      .about-grid, .loc-grid, .contact-grid { grid-template-columns: 1fr; }
+      .svc-grid { grid-template-columns: 1fr 1fr; }
+      .trust-grid { grid-template-columns: 1fr 1fr; }
+      .trust-hd { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .trust-hd p { text-align: left; }
+      .footer-top { grid-template-columns: 1fr; gap: 36px; }
+      .img-badge { right: 0; }
+      .img-stack { padding-bottom: 36px; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 72px 5%; }
+      .svc-grid { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: 1fr; }
+      .f-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ NAVBAR ══════════════════ -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-box"><img src="logo.png" alt="SC Lending Corp Logo" /></div>
+    <div class="nav-logo-text">
+      <b>SC Lending Corp.</b>
+      <small>Since 1997</small>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#location">Our Office</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"><img src="building1.jpg" alt="" /></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-glow"></div>
+  <!-- Mobile only top bar -->
+  <div class="hero-mobile-top">
+    <div class="hero-mobile-logo">
+      <img src="logo.png" alt="SC Lending Corp"
+        onerror="this.style.background='linear-gradient(145deg,#EDD060,#A8860A)';this.style.display='flex';this.style.alignItems='center';this.style.justifyContent='center';this.alt='SC'" />
+    </div>
+    <div class="hero-mobile-name">
+      <b id="mobile-company-name">SC LENDING CORP.</b>
+      <small>Since 1997</small>
+    </div>
+  </div>
+  <div class="hero-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="hero-body">
+    <!-- Desktop: badge at top | Mobile: hidden here -->
+    <div class="badge badge-hero anim-fade-left delay-1">
+      <div class="badge-dot"></div>
+      <span>SEC Registered &nbsp;·&nbsp; Licensed Lending Company</span>
+    </div>
+    <h1 class="anim-fade-up delay-2">Your Trusted <em>Financial</em><br>Partner in the<br>Philippines</h1>
+    <p class="hero-sub anim-fade-up delay-3">SC Lending Corp. has been empowering Filipinos with accessible, transparent, and reliable loan solutions for over 27 years. Serving individuals and businesses with integrity since 1997.</p>
+    <div class="hero-btns anim-fade-up delay-4">
+      <a href="https://primelendph.finance/register/" target="_blank" class="btn btn-gold">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Apply for a Loan
+      </a>
+      <a href="#about" class="btn btn-ghost">
+        About Us
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </div>
+    <!-- Mobile only: badge below buttons -->
+    <div class="badge badge-mobile anim-fade-up delay-5">
+      <div class="badge-dot"></div>
+      <span>SEC Registered &nbsp;·&nbsp; Licensed Lending Company</span>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">27+</div>
+      <div class="stat-label">Years in Operation</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">SEC</div>
+      <div class="stat-label">Registered &amp; Licensed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1997</div>
+      <div class="stat-label">Founded March 26</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">#437</div>
+      <div class="stat-label">License Number</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ ABOUT ══════════════════ -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="img-stack reveal-left">
+        <div class="img-main">
+          <img src="building1.jpg" alt="SC Lending Corp - Jollibee Plaza" />
+        </div>
+        <div class="img-badge">
+          <div class="img-badge-num">27+</div>
+          <div class="img-badge-lbl">Years of Trust</div>
+        </div>
+      </div>
+      <div class="about-text reveal-right">
+        <span class="tag">Who We Are</span>
+        <h2 class="h2">Building Financial <em>Trust</em><br>Since 1997</h2>
+        <p class="lead">SC Lending Corp. is a duly registered lending company under the Securities and Exchange Commission of the Philippines. With over two decades of dedicated service, we are committed to providing fair, transparent, and professional financial solutions to Filipinos.</p>
+        <p class="lead" style="margin-top:14px;">Our office is strategically located at <strong>Jollibee Plaza, Emerald Avenue, Pasig City</strong> — at the heart of Metro Manila's premier business district, making us accessible and easy to reach.</p>
+        <div class="reg-list">
+          <div class="reg-row"><div class="reg-dot"></div><span>SEC Registration No. <strong>A199705228</strong></span></div>
+          <div class="reg-row"><div class="reg-dot"></div><span>License No. <strong>437</strong></span></div>
+          <div class="reg-row"><div class="reg-dot"></div><span>Date of Registration: <strong>March 26, 1997</strong></span></div>
+          <div class="reg-row"><div class="reg-dot"></div><span>Regulated by the <strong>Securities and Exchange Commission, Philippines</strong></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SERVICES ══════════════════ -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="services-hd reveal">
+      <span class="tag">What We Offer</span>
+      <h2 class="h2">Loan Solutions for <em>Every Need</em></h2>
+      <p class="lead">We provide a comprehensive range of financial products designed to meet the diverse needs of individual borrowers and growing businesses alike.</p>
+    </div>
+    <div class="svc-grid">
+
+      <div class="svc-card reveal reveal-d1">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+        </div>
+        <h3>Personal Loan</h3>
+        <p>Flexible personal financing for medical needs, education, travel, home improvement, or any personal expense. Fast processing with competitive interest rates.</p>
+      </div>
+
+      <div class="svc-card reveal reveal-d2">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/></svg>
+        </div>
+        <h3>Business Loan</h3>
+        <p>Fuel your business growth with our structured business financing. Whether startup capital or expansion funds — we support Filipino entrepreneurs at every stage.</p>
+      </div>
+
+      <div class="svc-card reveal reveal-d3">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75"/></svg>
+        </div>
+        <h3>Salary Loan</h3>
+        <p>Quick cash advances for employed individuals. Minimal requirements, minimal paperwork, and fast release to help you address urgent financial concerns immediately.</p>
+      </div>
+
+      <div class="svc-card reveal reveal-d1">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918"/></svg>
+        </div>
+        <h3>OFW Loan</h3>
+        <p>Specially designed for Overseas Filipino Workers and their families. We understand the unique financial circumstances of OFWs and provide tailored support.</p>
+      </div>
+
+      <div class="svc-card reveal reveal-d2">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"/></svg>
+        </div>
+        <h3>SME Financing</h3>
+        <p>Tailored lending solutions for small and medium enterprises. Structured repayment plans and flexible terms designed to grow alongside your business.</p>
+      </div>
+
+      <div class="svc-card reveal reveal-d3">
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+        </div>
+        <h3>Emergency Loan</h3>
+        <p>When urgent situations arise, we are here. Our emergency loan program provides swift access to funds when you need financial assistance the most.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ TRUST ══════════════════ -->
+<section class="trust">
+  <div class="trust-hd reveal">
+    <h2>Why Choose <em>SC Lending</em></h2>
+    <p>Trusted by Filipinos for over 27 years. Here is why clients choose us.</p>
+  </div>
+  <div class="trust-grid">
+
+    <div class="trust-item">
+      <div class="trust-item-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+      </div>
+      <h4>SEC Licensed</h4>
+      <p>Fully registered and regulated by the Securities and Exchange Commission of the Philippines. Legitimate and accountable.</p>
+    </div>
+
+    <div class="trust-item">
+      <div class="trust-item-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h4>Fast Processing</h4>
+      <p>Streamlined application process with minimal documentation requirements to get your funds released as quickly as possible.</p>
+    </div>
+
+    <div class="trust-item">
+      <div class="trust-item-icon">
+        <svg viewBox="0 0 24 24"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+      </div>
+      <h4>Transparent Terms</h4>
+      <p>Clear and straightforward loan terms with no hidden charges. We believe every borrower deserves complete financial transparency.</p>
+    </div>
+
+    <div class="trust-item">
+      <div class="trust-item-icon">
+        <svg viewBox="0 0 24 24"><path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+      </div>
+      <h4>27 Years of Service</h4>
+      <p>Over two decades of proven experience serving Filipino borrowers with professionalism, reliability, and genuine care.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ LOCATION ══════════════════ -->
+<section class="location" id="location">
+  <div class="container">
+    <div class="loc-hd reveal">
+      <span class="tag">Find Us</span>
+      <h2 class="h2">Our <em>Office</em> Location</h2>
+      <p class="lead">Conveniently located at the heart of Pasig City's premier business district — Jollibee Plaza, Emerald Avenue.</p>
+    </div>
+    <div class="loc-grid">
+      <div class="loc-photos">
+        <div class="loc-photo-lg">
+          <img src="building1.jpg" alt="SC Lending Corp Building - Jollibee Plaza" />
+        </div>
+        <div class="loc-photo-row">
+          <div class="loc-photo-sm">
+            <img src="building2.jpg" alt="SC Lending Corp Office Entrance" />
+          </div>
+          <div class="loc-photo-sm p3">
+            <span>Unit 2308</span>
+            <small>Jollibee Plaza<br>Emerald Ave., Pasig City</small>
+          </div>
+        </div>
+      </div>
+      <div class="loc-info">
+        <div class="loc-map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d965.0!2d121.061353!3d14.587758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c817450c6a75%3A0x1fb0d614a3d3756b!2sSC%20Lending%20Corporation!5e0!3m2!1sen!2sph!4v1712000000001!5m2!1sen!2sph"
+            allowfullscreen loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <div class="loc-details">
+          <div class="loc-row">
+            <div class="loc-icon">
+              <svg viewBox="0 0 24 24"><path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+            </div>
+            <div class="loc-txt">
+              <h4>Address</h4>
+              <p>Unit 2308, Jollibee Plaza, Emerald Avenue<br>Pasig City, 1605, Metro Manila, Philippines</p>
+            </div>
+          </div>
+          <div class="loc-row">
+            <div class="loc-icon">
+              <svg viewBox="0 0 24 24"><path d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+            </div>
+            <div class="loc-txt">
+              <h4>Phone</h4>
+              <a href="tel:+63000000000">+63 (0) 000 000 0000</a>
+            </div>
+          </div>
+          <div class="loc-row">
+            <div class="loc-icon">
+              <svg viewBox="0 0 24 24"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+            </div>
+            <div class="loc-txt">
+              <h4>Email</h4>
+              <a href="mailto:info@sclendingcorp.com">info@sclendingcorp.com</a>
+            </div>
+          </div>
+          <div class="loc-row">
+            <div class="loc-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="loc-txt">
+              <h4>Office Hours</h4>
+              <p>Monday – Friday: 8:00 AM – 5:00 PM<br>Saturday: 8:00 AM – 12:00 PM</p>
+            </div>
+          </div>
+          <a href="https://www.google.com/maps/place/SC+Lending+Corporation/@14.5877605,121.0601131,17.97z/data=!3m1!4b1!4m6!3m5!1s0x3397c817450c6a75:0x1fb0d614a3d3756b!8m2!3d14.587758!4d121.061353!16s%2Fg%2F11bzv_0mkt?entry=ttu" target="_blank" class="gmaps-link">
+            <svg viewBox="0 0 24 24"><path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+            Open in Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ CONTACT ══════════════════ -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal-left">
+        <span class="tag">Get in Touch</span>
+        <h2 class="h2">Ready to <em>Apply?</em></h2>
+        <p class="lead">Reach out to us directly — our loan officers are ready to assist you. We respond within 24 business hours.</p>
+        <div class="info-cards">
+          <div class="info-card">
+            <div class="info-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke="var(--green-dark)" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+            </div>
+            <div class="info-card-body">
+              <h4>No Upfront Fees</h4>
+              <p>We do not charge any fees or deposits before loan disbursement. Our process is 100% transparent.</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke="var(--green-dark)" stroke-linecap="round" stroke-linejoin="round"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+            </div>
+            <div class="info-card-body">
+              <h4>Fast Response</h4>
+              <p>Our loan officers respond within 24 hours on business days. Simple requirements, quick decision.</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke="var(--green-dark)" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+            </div>
+            <div class="info-card-body">
+              <h4>Secure &amp; Confidential</h4>
+              <p>Your personal information is handled with strict confidentiality and used only for loan processing purposes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="f-brand">
+      <p>A duly registered lending company committed to providing fair, transparent, and accessible financial solutions to all Filipinos across the Philippines.</p>
+      <div class="f-reg">
+        <span>SEC Registration No. A199705228</span>
+        <span>License No. 437</span>
+        <span>Date of Registration: March 26, 1997</span>
+        <span>Regulated by the Securities and Exchange Commission, Philippines</span>
+      </div>
+    </div>
+    <div class="f-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#services">Our Services</a></li>
+        <li><a href="#location">Our Office</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+        <li><a href="#contact">Apply Now</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">Unit 2308, Jollibee Plaza</a></li>
+        <li><a href="#">Emerald Ave., Pasig City 1605</a></li>
+        <li><a href="tel:+63000000000">+63 (0) 000 000 0000</a></li>
+        <li><a href="mailto:info@sclendingcorp.com">info@sclendingcorp.com</a></li>
+        <li><a href="#">Mon–Fri 8:00 AM – 5:00 PM</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 <em>SC Lending Corp.</em> All rights reserved. SEC Reg. No. A199705228</p>
+    <p>Regulated by the Securities and Exchange Commission of the Philippines</p>
+  </div>
+</footer>
+
+
+<script>
+// ── Scroll reveal (Intersection Observer) ────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right')
+  .forEach(el => observer.observe(el));
+
+// ── Load config from backend and apply to frontend ────────────
+(async function() {
+  const show = () => document.body.classList.add('ready');
+  try {
+    const res = await fetch('/api/config');
+    if (!res.ok) { show(); return; }
+    const c = await res.json();
+
+    const set = (sel, val, attr) => {
+      document.querySelectorAll(sel).forEach(el => {
+        if (attr) el[attr] = val;
+        else el.textContent = val;
+      });
+    };
+    const setImg = (sel, src) => {
+      document.querySelectorAll(sel).forEach(el => {
+        el.src = src + '?t=' + Date.now();
+      });
+    };
+
+    // Company name & tagline
+    if (c.companyName) {
+      set('.nav-logo-text b', c.companyName);
+      set('.f-logo-txt b', c.companyName);
+      set('#mobile-company-name', c.companyName.toUpperCase());
+    }
+    if (c.tagline) {
+      set('.nav-logo-text small', c.tagline);
+    }
+
+    // Apply link (all "Apply for a Loan" buttons)
+    if (c.applyLink) {
+      document.querySelectorAll('a.btn-gold').forEach(el => el.href = c.applyLink);
+      document.querySelectorAll('a.nav-cta').forEach(el => el.href = c.applyLink);
+    }
+
+    // Hero
+    if (c.heroTitle) {
+      const h1 = document.querySelector('.hero h1');
+      if (h1) {
+        // Keep the <em> on the second word
+        const words = c.heroTitle.split(' ');
+        const em = words[2] || '';
+        const before = words.slice(0,2).join(' ') + ' ';
+        const after  = ' ' + words.slice(3).join(' ');
+        h1.innerHTML = before + '<em>' + em + '</em>' + after;
+      }
+    }
+    if (c.heroSubtitle) set('.hero-sub', c.heroSubtitle);
+    if (c.yearsInOperation) {
+      document.querySelectorAll('.stat-num').forEach((el, i) => {
+        if (i === 0) el.textContent = c.yearsInOperation;
+      });
+    }
+
+    // About
+    if (c.aboutText) {
+      const leads = document.querySelectorAll('.about-text .lead');
+      if (leads[0]) leads[0].textContent = c.aboutText;
+      if (leads[1] && c.aboutText2) leads[1].textContent = c.aboutText2;
+    }
+
+    // Registration
+    const regRows = document.querySelectorAll('.reg-row');
+    if (regRows[0] && c.registrationNo) regRows[0].querySelector('strong').textContent = c.registrationNo;
+    if (regRows[1] && c.licenseNo)      regRows[1].querySelector('strong').textContent = c.licenseNo;
+    if (regRows[2] && c.regDate)        regRows[2].querySelector('strong').textContent = c.regDate;
+
+    // Contact
+    if (c.phone) {
+      document.querySelectorAll('a[href^="tel:"]').forEach(el => {
+        el.href = 'tel:' + c.phone.replace(/\s/g,'');
+        el.textContent = c.phone;
+      });
+    }
+    if (c.email) {
+      document.querySelectorAll('a[href^="mailto:"]').forEach(el => {
+        el.href = 'mailto:' + c.email;
+        el.textContent = c.email;
+      });
+    }
+    if (c.mapsLink) {
+      document.querySelectorAll('a.gmaps-link').forEach(el => el.href = c.mapsLink);
+    }
+
+    // Office hours
+    if (c.officeHours) {
+      document.querySelectorAll('.loc-txt p').forEach(el => {
+        if (el.textContent.includes('Monday') || el.textContent.includes('Friday')) {
+          el.innerHTML = c.officeHours.replace('|','<br>');
+        }
+      });
+    }
+
+    // Images — add cache-buster so browser reloads after upload
+    if (c.logo)      setImg('img[src^="logo"]', c.logo);
+    if (c.building1) setImg('img[src^="building1"]', c.building1);
+    if (c.building2) setImg('img[src^="building2"]', c.building2);
+
+    // Hero background
+    if (c.building1) {
+      const heroBg = document.querySelector('.hero-bg img');
+      if (heroBg) heroBg.src = c.building1 + '?t=' + Date.now();
+    }
+
+    // Footer
+    if (c.registrationNo) {
+      document.querySelectorAll('.f-reg span').forEach((el,i) => {
+        if (i===0) el.textContent = 'SEC Registration No. ' + c.registrationNo;
+        if (i===1) el.textContent = 'License No. ' + c.licenseNo;
+        if (i===2) el.textContent = 'Date of Registration: ' + c.regDate;
+      });
+      const fbottom = document.querySelector('.footer-bottom p em');
+      if (fbottom) fbottom.parentElement.innerHTML =
+        '© 2025 <em>' + c.companyName + '</em> All rights reserved. SEC Reg. No. ' + c.registrationNo;
+    }
+
+    show();
+  } catch(e) {
+    // Running without server — static values remain, still show page
+    show();
+  }
+})();
+</script>
+</body>
+</html>

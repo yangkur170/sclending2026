@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SC Lending Corp — Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --green:#27A31A; --green-light:#3CC42E; --green-dark:#177510;
+      --gold:#D4AF37; --gold-light:#EDD060;
+      --dark:#0F1E0D; --dark-2:#162413; --sidebar:#1A2E17;
+      --bg:#F4F9F3; --white:#FFFFFF;
+      --border:#D8EDD4; --text:#1E3418; --text-light:#5A7852;
+      --red:#DC3545; --red-light:#fff0f0;
+    }
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* ── LOGIN ── */
+    #login-screen{
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;background:linear-gradient(145deg,var(--dark) 0%,var(--dark-2) 100%);
+    }
+    .login-box{
+      background:var(--white);border-radius:20px;padding:48px 44px;
+      width:100%;max-width:420px;text-align:center;
+      box-shadow:0 24px 64px rgba(0,0,0,0.3);
+    }
+    .login-logo{
+      width:72px;height:72px;border-radius:14px;overflow:hidden;
+      margin:0 auto 20px;border:3px solid var(--border);
+    }
+    .login-logo img{width:100%;height:100%;object-fit:cover}
+    .login-logo-fallback{
+      width:100%;height:100%;
+      background:linear-gradient(145deg,var(--gold-light),var(--gold));
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:22px;color:var(--dark);
+    }
+    .login-box h1{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:6px}
+    .login-box p{font-size:13px;color:var(--text-light);margin-bottom:32px}
+    .login-box input{
+      width:100%;padding:14px 16px;border:1.5px solid var(--border);
+      border-radius:9px;font-size:15px;font-family:'Inter',sans-serif;
+      color:var(--dark);background:var(--bg);outline:none;
+      transition:border-color .2s;margin-bottom:14px;
+    }
+    .login-box input:focus{border-color:var(--green)}
+    .login-btn{
+      width:100%;padding:15px;border:none;border-radius:9px;
+      background:var(--green);color:var(--white);
+      font-size:15px;font-weight:700;font-family:'Inter',sans-serif;
+      cursor:pointer;transition:background .2s;
+    }
+    .login-btn:hover{background:var(--green-light)}
+    .login-error{
+      background:#fff0f0;border:1px solid #ffc0c0;color:var(--red);
+      padding:10px 14px;border-radius:8px;font-size:13px;
+      margin-top:12px;display:none;
+    }
+
+    /* ── LAYOUT ── */
+    #app{display:none;min-height:100vh;flex-direction:row}
+
+    .sidebar{
+      width:260px;min-height:100vh;background:var(--sidebar);
+      display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;
+      z-index:100;
+    }
+    .sidebar-logo{
+      padding:24px 22px;border-bottom:1px solid rgba(255,255,255,0.07);
+      display:flex;align-items:center;gap:12px;
+    }
+    .sidebar-logo-img{
+      width:40px;height:40px;border-radius:8px;overflow:hidden;flex-shrink:0;
+    }
+    .sidebar-logo-img img{width:100%;height:100%;object-fit:cover}
+    .sidebar-logo-fallback{
+      width:100%;height:100%;
+      background:linear-gradient(145deg,var(--gold-light),var(--gold));
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:14px;color:var(--dark);
+    }
+    .sidebar-logo-txt b{display:block;font-size:13px;font-weight:700;color:var(--white)}
+    .sidebar-logo-txt small{font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase}
+
+    .sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto}
+    .nav-label{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);
+      letter-spacing:2px;text-transform:uppercase;padding:16px 10px 8px}
+    .nav-item{
+      display:flex;align-items:center;gap:11px;padding:11px 12px;
+      border-radius:9px;cursor:pointer;margin-bottom:2px;
+      transition:background .15s,color .15s;color:rgba(255,255,255,0.55);
+      font-size:13.5px;font-weight:500;
+    }
+    .nav-item:hover{background:rgba(255,255,255,0.06);color:var(--white)}
+    .nav-item.active{background:var(--green);color:var(--white);font-weight:600}
+    .nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;
+      stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+    .sidebar-bottom{padding:16px 12px;border-top:1px solid rgba(255,255,255,0.07)}
+    .preview-btn{
+      display:flex;align-items:center;gap:9px;padding:11px 14px;
+      background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.25);
+      border-radius:9px;color:var(--gold);font-size:13px;font-weight:600;
+      text-decoration:none;margin-bottom:8px;transition:background .2s;
+    }
+    .preview-btn:hover{background:rgba(212,175,55,0.2)}
+    .preview-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;
+      stroke-linecap:round;stroke-linejoin:round}
+    .logout-btn{
+      display:flex;align-items:center;gap:9px;padding:11px 14px;
+      background:rgba(220,53,69,0.08);border:1px solid rgba(220,53,69,0.15);
+      border-radius:9px;color:#ff6b6b;font-size:13px;font-weight:600;
+      cursor:pointer;width:100%;text-align:left;font-family:'Inter',sans-serif;
+      transition:background .2s;
+    }
+    .logout-btn:hover{background:rgba(220,53,69,0.15)}
+    .logout-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;
+      stroke-linecap:round;stroke-linejoin:round}
+
+    /* ── MAIN ── */
+    .main{margin-left:260px;flex:1;padding:32px 36px;min-height:100vh}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:32px;
+    }
+    .topbar h1{font-size:22px;font-weight:800;color:var(--dark)}
+    .topbar p{font-size:13px;color:var(--text-light);margin-top:3px}
+    .save-all-btn{
+      display:flex;align-items:center;gap:9px;
+      background:var(--green);color:var(--white);
+      border:none;padding:13px 28px;border-radius:9px;
+      font-size:14px;font-weight:700;font-family:'Inter',sans-serif;
+      cursor:pointer;transition:all .2s;
+    }
+    .save-all-btn:hover{background:var(--green-light);transform:translateY(-1px)}
+    .save-all-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;
+      stroke-linecap:round;stroke-linejoin:round}
+
+    /* ── PANELS ── */
+    .panel{display:none}
+    .panel.active{display:block}
+
+    .card{
+      background:var(--white);border-radius:16px;padding:32px;
+      border:1px solid var(--border);margin-bottom:24px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.04);
+    }
+    .card-title{
+      font-size:15px;font-weight:700;color:var(--dark);
+      margin-bottom:22px;padding-bottom:16px;
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:9px;
+    }
+    .card-title svg{width:18px;height:18px;stroke:var(--green);fill:none;
+      stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .card-title span{font-size:12px;font-weight:500;color:var(--text-light);margin-left:auto}
+
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .form-grid.full{grid-template-columns:1fr}
+    .f-group{display:flex;flex-direction:column;gap:7px}
+    .f-group.full{grid-column:1/-1}
+    .f-group label{font-size:12px;font-weight:700;color:var(--text);
+      text-transform:uppercase;letter-spacing:0.5px}
+    .f-group input,.f-group textarea,.f-group select{
+      padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;
+      font-size:14px;font-family:'Inter',sans-serif;color:var(--dark);
+      background:var(--bg);outline:none;transition:border-color .2s;
+    }
+    .f-group input:focus,.f-group textarea:focus,.f-group select:focus{border-color:var(--green)}
+    .f-group textarea{height:100px;resize:vertical}
+    .f-hint{font-size:11.5px;color:var(--text-light)}
+
+    /* ── IMAGE UPLOAD ── */
+    .img-upload-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .img-upload-box{
+      border:2px dashed var(--border);border-radius:14px;padding:24px;
+      text-align:center;cursor:pointer;transition:all .2s;position:relative;
+      background:var(--bg);
+    }
+    .img-upload-box:hover{border-color:var(--green);background:rgba(39,163,26,0.03)}
+    .img-upload-box.dragover{border-color:var(--green);background:rgba(39,163,26,0.06)}
+    .img-preview{
+      width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden;
+      margin-bottom:14px;background:var(--border);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .img-preview img{width:100%;height:100%;object-fit:cover;display:block}
+    .img-preview-placeholder{
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      color:var(--text-light);
+    }
+    .img-preview-placeholder svg{width:32px;height:32px;stroke:currentColor;fill:none;
+      stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.5}
+    .img-upload-lbl{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:4px}
+    .img-upload-sub{font-size:11.5px;color:var(--text-light)}
+    .img-upload-btn{
+      display:inline-block;margin-top:12px;padding:9px 18px;
+      background:var(--green);color:var(--white);
+      border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;
+      transition:background .2s;
+    }
+    .img-upload-btn:hover{background:var(--green-light)}
+    .img-upload-input{display:none}
+    .img-uploading{
+      position:absolute;inset:0;background:rgba(255,255,255,0.85);
+      border-radius:14px;display:none;align-items:center;justify-content:center;
+      font-size:13px;font-weight:600;color:var(--green);
+    }
+    .img-upload-box.loading .img-uploading{display:flex}
+
+    /* ── TOAST ── */
+    #toast{
+      position:fixed;bottom:28px;right:28px;z-index:9999;
+      display:flex;flex-direction:column;gap:10px;
+    }
+    .toast-item{
+      display:flex;align-items:center;gap:12px;
+      padding:14px 20px;border-radius:10px;
+      font-size:13.5px;font-weight:600;
+      box-shadow:0 8px 24px rgba(0,0,0,0.15);
+      animation:slideIn .25s ease;min-width:280px;
+    }
+    @keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+    .toast-item.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
+    .toast-item.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
+    .toast-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;
+      stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+    /* ── PASSWORD ── */
+    .pw-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:end}
+    .pw-btn{
+      padding:12px 22px;background:var(--green);color:var(--white);
+      border:none;border-radius:8px;font-size:13.5px;font-weight:700;
+      font-family:'Inter',sans-serif;cursor:pointer;transition:background .2s;
+    }
+    .pw-btn:hover{background:var(--green-light)}
+
+    /* ── STAT CARDS ── */
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+    .stat-card{
+      background:var(--white);border-radius:14px;padding:22px 20px;
+      border:1px solid var(--border);
+    }
+    .stat-card-num{font-size:28px;font-weight:800;color:var(--green);line-height:1}
+    .stat-card-lbl{font-size:12px;color:var(--text-light);margin-top:5px}
+
+    @media(max-width:900px){
+      .sidebar{width:220px}
+      .main{margin-left:220px;padding:24px}
+      .form-grid{grid-template-columns:1fr}
+      .img-upload-grid{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="logo.png" alt="Logo" onerror="this.parentElement.innerHTML='<div class=\'login-logo-fallback\'>SC</div>'" />
+    </div>
+    <h1>Admin Panel</h1>
+    <p>SC Lending Corp. — Content Management</p>
+    <input type="password" id="pw-input" placeholder="Enter admin password" />
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-error" id="login-error">Wrong password. Try again.</div>
+  </div>
+</div>
+
+<!-- ══ APP ═════════════════════════════════════════════ -->
+<div id="app" style="display:none;min-height:100vh;display:none">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-img">
+        <img id="sidebar-logo-img" src="logo.png" alt="Logo"
+          onerror="this.parentElement.innerHTML='<div class=\'sidebar-logo-fallback\'>SC</div>'" />
+      </div>
+      <div class="sidebar-logo-txt">
+        <b id="sidebar-company-name">SC Lending Corp.</b>
+        <small>Admin Panel</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Content</div>
+      <div class="nav-item active" onclick="showPanel('general',this)">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        General Info
+      </div>
+      <div class="nav-item" onclick="showPanel('images',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Images & Logo
+      </div>
+      <div class="nav-item" onclick="showPanel('hero',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        Hero Section
+      </div>
+      <div class="nav-item" onclick="showPanel('about',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        About Section
+      </div>
+      <div class="nav-item" onclick="showPanel('contact',this)">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+        Contact Info
+      </div>
+      <div class="nav-label">System</div>
+      <div class="nav-item" onclick="showPanel('security',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Security
+      </div>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <a href="/" target="_blank" class="preview-btn">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Preview Website
+      </a>
+      <button class="logout-btn" onclick="doLogout()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="panel-title">General Info</h1>
+        <p id="panel-desc">Edit your company's basic information</p>
+      </div>
+      <button class="save-all-btn" onclick="saveAll()">
+        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Changes
+      </button>
+    </div>
+
+    <!-- ── PANEL: General ── -->
+    <div class="panel active" id="panel-general">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-card-num" id="stat-years">27+</div><div class="stat-card-lbl">Years in Operation</div></div>
+        <div class="stat-card"><div class="stat-card-num">SEC</div><div class="stat-card-lbl">Registered & Licensed</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="stat-reg">1997</div><div class="stat-card-lbl">Year Founded</div></div>
+        <div class="stat-card"><div class="stat-card-num" id="stat-lic">#437</div><div class="stat-card-lbl">License Number</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Company Identity
+        </div>
+        <div class="form-grid">
+          <div class="f-group">
+            <label>Company Name</label>
+            <input type="text" id="f-companyName" placeholder="SC Lending Corp." />
+          </div>
+          <div class="f-group">
+            <label>Tagline (e.g. Since 1997)</label>
+            <input type="text" id="f-tagline" placeholder="Since 1997" />
+          </div>
+          <div class="f-group">
+            <label>Apply / Register Link</label>
+            <input type="url" id="f-applyLink" placeholder="https://..." />
+            <span class="f-hint">This is where "Apply for a Loan" button redirects</span>
+          </div>
+          <div class="f-group">
+            <label>Years in Operation (Hero stat)</label>
+            <input type="text" id="f-yearsInOperation" placeholder="27+" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Registration Details
+        </div>
+        <div class="form-grid">
+          <div class="f-group">
+            <label>SEC Registration Number</label>
+            <input type="text" id="f-registrationNo" placeholder="A199705228" />
+          </div>
+          <div class="f-group">
+            <label>License Number</label>
+            <input type="text" id="f-licenseNo" placeholder="437" />
+          </div>
+          <div class="f-group full">
+            <label>Date of Registration</label>
+            <input type="text" id="f-regDate" placeholder="March 26, 1997" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PANEL: Images ── -->
+    <div class="panel" id="panel-images">
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Upload Images
+          <span>Max 10MB per image · JPG, PNG, WEBP</span>
+        </div>
+        <div class="img-upload-grid">
+
+          <!-- Logo -->
+          <div class="img-upload-box" id="box-logo"
+            ondragover="dragOver(event,'box-logo')" ondragleave="dragLeave('box-logo')"
+            ondrop="dropFile(event,'logo','box-logo')">
+            <div class="img-uploading">Uploading...</div>
+            <div class="img-preview" id="prev-logo">
+              <img src="logo.png" alt="Logo" id="img-logo"
+                onerror="this.parentElement.innerHTML='<div class=\'img-preview-placeholder\'><svg viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span style=\'font-size:12px\'>No logo</span></div>'" />
+            </div>
+            <div class="img-upload-lbl">Company Logo</div>
+            <div class="img-upload-sub">Shown in navbar & footer</div>
+            <label class="img-upload-btn">
+              Choose File
+              <input type="file" class="img-upload-input" accept="image/*" onchange="uploadImage(this,'logo','box-logo','img-logo')" />
+            </label>
+          </div>
+
+          <!-- Building 1 -->
+          <div class="img-upload-box" id="box-building1"
+            ondragover="dragOver(event,'box-building1')" ondragleave="dragLeave('box-building1')"
+            ondrop="dropFile(event,'building1','box-building1')">
+            <div class="img-uploading">Uploading...</div>
+            <div class="img-preview">
+              <img src="building1.jpg" alt="Building 1" id="img-building1"
+                onerror="this.parentElement.innerHTML='<div class=\'img-preview-placeholder\'><svg viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span style=\'font-size:12px\'>No image</span></div>'" />
+            </div>
+            <div class="img-upload-lbl">Building Photo 1</div>
+            <div class="img-upload-sub">Hero background & About section</div>
+            <label class="img-upload-btn">
+              Choose File
+              <input type="file" class="img-upload-input" accept="image/*" onchange="uploadImage(this,'building1','box-building1','img-building1')" />
+            </label>
+          </div>
+
+          <!-- Building 2 -->
+          <div class="img-upload-box" id="box-building2"
+            ondragover="dragOver(event,'box-building2')" ondragleave="dragLeave('box-building2')"
+            ondrop="dropFile(event,'building2','box-building2')">
+            <div class="img-uploading">Uploading...</div>
+            <div class="img-preview">
+              <img src="building2.jpg" alt="Building 2" id="img-building2"
+                onerror="this.parentElement.innerHTML='<div class=\'img-preview-placeholder\'><svg viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span style=\'font-size:12px\'>No image</span></div>'" />
+            </div>
+            <div class="img-upload-lbl">Building Photo 2</div>
+            <div class="img-upload-sub">Location section gallery</div>
+            <label class="img-upload-btn">
+              Choose File
+              <input type="file" class="img-upload-input" accept="image/*" onchange="uploadImage(this,'building2','box-building2','img-building2')" />
+            </label>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PANEL: Hero ── -->
+    <div class="panel" id="panel-hero">
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          Hero Section Content
+        </div>
+        <div class="form-grid full">
+          <div class="f-group full">
+            <label>Main Headline</label>
+            <input type="text" id="f-heroTitle" placeholder="Your Trusted Financial Partner..." />
+            <span class="f-hint">The big bold title in the hero section</span>
+          </div>
+          <div class="f-group full">
+            <label>Sub-Headline / Description</label>
+            <textarea id="f-heroSubtitle" placeholder="SC Lending Corp. has been empowering..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PANEL: About ── -->
+    <div class="panel" id="panel-about">
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          About Section Content
+        </div>
+        <div class="form-grid full">
+          <div class="f-group full">
+            <label>About Title</label>
+            <input type="text" id="f-aboutTitle" placeholder="Building Financial Trust Since 1997" />
+          </div>
+          <div class="f-group full">
+            <label>About Paragraph 1</label>
+            <textarea id="f-aboutText" placeholder="SC Lending Corp. is a duly registered..."></textarea>
+          </div>
+          <div class="f-group full">
+            <label>About Paragraph 2</label>
+            <textarea id="f-aboutText2" placeholder="Our office is strategically located..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PANEL: Contact ── -->
+    <div class="panel" id="panel-contact">
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+          Contact Information
+        </div>
+        <div class="form-grid">
+          <div class="f-group">
+            <label>Phone Number</label>
+            <input type="text" id="f-phone" placeholder="+63 (0) 000 000 0000" />
+          </div>
+          <div class="f-group">
+            <label>Email Address</label>
+            <input type="email" id="f-email" placeholder="info@sclendingcorp.com" />
+          </div>
+          <div class="f-group full">
+            <label>Office Address</label>
+            <input type="text" id="f-address" placeholder="Unit 2308, Jollibee Plaza..." />
+          </div>
+          <div class="f-group full">
+            <label>Office Hours</label>
+            <input type="text" id="f-officeHours" placeholder="Monday – Friday: 8:00 AM – 5:00 PM" />
+          </div>
+          <div class="f-group full">
+            <label>Google Maps Link</label>
+            <input type="url" id="f-mapsLink" placeholder="https://maps.google.com/..." />
+            <span class="f-hint">Full Google Maps URL for "Open in Google Maps" button</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PANEL: Security ── -->
+    <div class="panel" id="panel-security">
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Change Admin Password
+        </div>
+        <div class="pw-grid">
+          <div class="f-group">
+            <label>New Password (min 6 characters)</label>
+            <input type="password" id="f-newPassword" placeholder="Enter new password" />
+          </div>
+          <button class="pw-btn" onclick="changePassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ── Helpers ──────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+let config = {};
+
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  const div = document.createElement('div');
+  div.className = 'toast-item ' + type;
+  div.innerHTML = (type === 'success'
+    ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+    : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+  ) + msg;
+  t.appendChild(div);
+  setTimeout(() => div.remove(), 4000);
+}
+
+// ── Auth ─────────────────────────────────────────────────────
+async function doLogin() {
+  const pw = $('pw-input').value;
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: pw })
+  });
+  if (res.ok) {
+    $('login-screen').style.display = 'none';
+    $('app').style.display = 'flex';
+    loadConfig();
+  } else {
+    $('login-error').style.display = 'block';
+  }
+}
+
+async function doLogout() {
+  await fetch('/api/logout', { method: 'POST' });
+  location.reload();
+}
+
+$('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// ── Config ───────────────────────────────────────────────────
+async function loadConfig() {
+  const res = await fetch('/api/config');
+  config = await res.json();
+
+  // Fill all fields
+  const fields = ['companyName','tagline','applyLink','yearsInOperation',
+    'registrationNo','licenseNo','regDate',
+    'heroTitle','heroSubtitle','aboutTitle','aboutText','aboutText2',
+    'phone','email','address','officeHours','mapsLink'];
+
+  fields.forEach(key => {
+    const el = $('f-' + key);
+    if (el) el.value = config[key] || '';
+  });
+
+  // Update sidebar & stats
+  $('sidebar-company-name').textContent = config.companyName || 'SC Lending Corp.';
+  $('stat-years').textContent = config.yearsInOperation || '27+';
+  $('stat-reg').textContent = (config.regDate || '').split(' ').pop() || '1997';
+  $('stat-lic').textContent = '#' + (config.licenseNo || '437');
+}
+
+async function saveAll() {
+  const fields = ['companyName','tagline','applyLink','yearsInOperation',
+    'registrationNo','licenseNo','regDate',
+    'heroTitle','heroSubtitle','aboutTitle','aboutText','aboutText2',
+    'phone','email','address','officeHours','mapsLink'];
+
+  const data = {};
+  fields.forEach(key => {
+    const el = $('f-' + key);
+    if (el) data[key] = el.value;
+  });
+
+  const res = await fetch('/api/config', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  const json = await res.json();
+  if (res.ok) {
+    toast(json.message || 'Saved successfully!');
+    $('sidebar-company-name').textContent = data.companyName || 'SC Lending Corp.';
+  } else {
+    toast(json.error || 'Failed to save', 'error');
+  }
+}
+
+// ── Panel nav ────────────────────────────────────────────────
+const panelMeta = {
+  general: { title: 'General Info', desc: 'Edit company identity & registration details' },
+  images:  { title: 'Images & Logo', desc: 'Upload logo and building photos' },
+  hero:    { title: 'Hero Section', desc: 'Edit the main banner text' },
+  about:   { title: 'About Section', desc: 'Edit company about content' },
+  contact: { title: 'Contact Info', desc: 'Update phone, email, address & map link' },
+  security:{ title: 'Security', desc: 'Change admin panel password' },
+};
+
+function showPanel(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  $('panel-' + name).classList.add('active');
+  el.classList.add('active');
+  $('panel-title').textContent = panelMeta[name].title;
+  $('panel-desc').textContent  = panelMeta[name].desc;
+}
+
+// ── Image upload ─────────────────────────────────────────────
+async function uploadImage(input, target, boxId, imgId) {
+  if (!input.files[0]) return;
+  const box = $(boxId);
+  box.classList.add('loading');
+
+  const fd = new FormData();
+  fd.append('image', input.files[0]);
+  fd.append('target', target);
+
+  const res = await fetch('/api/upload', { method: 'POST', body: fd });
+  const json = await res.json();
+  box.classList.remove('loading');
+
+  if (res.ok) {
+    const img = $(imgId);
+    if (img) { img.src = json.url + '?t=' + Date.now(); }
+    // Refresh sidebar logo
+    if (target === 'logo') {
+      $('sidebar-logo-img').querySelector('img').src = json.url + '?t=' + Date.now();
+    }
+    toast('Image uploaded successfully!');
+  } else {
+    toast(json.error || 'Upload failed', 'error');
+  }
+}
+
+function dragOver(e, boxId) { e.preventDefault(); $(boxId).classList.add('dragover'); }
+function dragLeave(boxId)   { $(boxId).classList.remove('dragover'); }
+async function dropFile(e, target, boxId) {
+  e.preventDefault();
+  dragLeave(boxId);
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const mockInput = { files: [file] };
+  const imgId = 'img-' + target;
+  await uploadImage(mockInput, target, boxId, imgId);
+}
+
+// ── Password ─────────────────────────────────────────────────
+async function changePassword() {
+  const pw = $('f-newPassword').value;
+  const res = await fetch('/api/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ newPassword: pw })
+  });
+  const json = await res.json();
+  if (res.ok) { toast(json.message); $('f-newPassword').value = ''; }
+  else toast(json.error, 'error');
+}
+
+// ── Check session on load ─────────────────────────────────────
+fetch('/api/me').then(r => r.json()).then(d => {
+  if (d.authenticated) {
+    $('login-screen').style.display = 'none';
+    $('app').style.display = 'flex';
+    loadConfig();
+  }
+});
+</script>
+</body>
+</html>
